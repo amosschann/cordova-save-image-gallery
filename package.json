@@ -1,5 +1,5 @@
 {
-  "name": "cordova-save-image-gallery",
+  "name": "@tanyijia/cordova-save-image-gallery",
   "version": "0.0.27",
   "description": "Cordova plugin to save base64 data as a png/jpg image into the device and applying compression if needed",
   "license": "MIT",
@@ -8,10 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/agomezmoron/cordova-save-image-gallery.git"
+    "url": "git+https://github.com/YeetJia/cordova-save-image-gallery.git"
   },
   "bugs": {
-    "url": "https://github.com/agomezmoron/cordova-save-image-gallery/issues"
+    "url": "https://github.com/YeetJia/cordova-save-image-gallery/issues"
   },
   "engines": [
     {
@@ -43,9 +43,9 @@
     "cordova-wp8"
   ],
   "author": {
-    "name": "Alejandro Gomez",
-    "email": "agommor@gmail.com",
-    "url": "http://github.com/agomezmoron"
+    "name": "Tan Yi Jia",
+    "email": "tanyijia@gmail.com",
+    "url": "http://github.com/YeetJia"
   },
   "contributors": [
     {
@@ -67,6 +67,11 @@
       "name": "Bastian Meier",
       "email": "post@bastianmeier.de",
       "url": "http://github.com/bastian-meie"
+    },
+    {
+      "name": "Alejandro Gomez",
+      "email": "agommor@gmail.com",
+      "url": "http://github.com/agomezmoron"
     }
   ],
   "devDependencies": {

@@ -8,6 +8,7 @@
   <name>saveImageGallery</name>
 
   <description>This plugin allows you to save base64 data as a png/jpg image into the device (iOS Photo Library, Android Gallery, WindowsPhone 8 Photo Album) compressing also the image if needed.</description>
+  <author>Tan Yi Jia - tanyijia@gmail.com</author>
   <author>Alejandro Gomez - agommor@gmail.com</author>
   <author>Tommy-Carlos Williams - tommy@devgeeks.org</author>
   <author>Simba Zhang - solderzzc@gmail.com</author>
