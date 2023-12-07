@@ -1,6 +1,6 @@
 {
   "name": "@tanyijia/cordova-save-image-gallery",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "description": "Cordova plugin to save base64 data as a png/jpg image into the device and applying compression if needed",
   "license": "MIT",
   "scripts": {
