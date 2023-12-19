@@ -1,6 +1,5 @@
 package com.tanyijia.SaveImageGallery;
 
-import java.io.File;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Arrays;
@@ -12,17 +11,13 @@ import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
