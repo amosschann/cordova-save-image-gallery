@@ -1,10 +1,11 @@
 /**
- * @file saveImageGallery PhoneGap/Cordova plugin
+ * @file SaveImageGallery PhoneGap/Cordova plugin
+ * @author Tan Yi Jia <tanyijia@gmail.com>
  * @author Alejandro Gómez <agommor@gmail.com>
  * @author Tommy-Carlos Williams
  * @author Simba Zhang <solderzzc@gmail.com>
  * @author StefanoMagrassi <stefano.magrassi@gmail.com>
- * @copyright Alejandro Gómez - 2016. All rights reserved.
+ * @copyright Tan Yi Jia - 2023. All rights reserved.
  * @license MIT
  */
 
