@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.PermissionHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,10 +40,6 @@ import android.widget.Toast;
  */
 public class SaveImageGallery extends CordovaPlugin {
 
-    // Android Version Check
-    public static final int SDK_BUILD = android.os.Build.VERSION.SDK_INT;
-    public static final int TIRAMISU_SDK_BUILD = android.os.Build.VERSION_CODES.TIRAMISU;
-
     // Consts
     public static final String EMPTY_STR = "";
 
@@ -54,14 +49,6 @@ public class SaveImageGallery extends CordovaPlugin {
     // actions constants
     public static final String SAVE_BASE64_ACTION = "saveImageDataToLibrary";
     public static final String REMOVE_IMAGE_ACTION = "removeImageFromLibrary";
-
-    public static final int WRITE_PERM_REQUEST_CODE = 0;
-    public static final int READ_MEDIA_PERM_REQUEST_CODE = 1;
-
-    private final String WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-    private final String READ_MEDIA_IMAGES = Manifest.permission.READ_MEDIA_IMAGES;
-
-    // private Context CONTEXT = this.cordova.getActivity().getApplicationContext();
 
     private JSONArray _args;
     private CallbackContext _callback;
@@ -75,26 +62,7 @@ public class SaveImageGallery extends CordovaPlugin {
         else {
             this._args = args;
             this._callback = callbackContext;
-
-            if (SDK_BUILD < TIRAMISU_SDK_BUILD) {
-                // For Android 12 and below
-                if (PermissionHelper.hasPermission(this, WRITE_EXTERNAL_STORAGE)) {
-                    Log.d("SaveImageGallery", "Permissions already granted, or Android version is lower than 6");
-                    saveBase64Image(this._args, this._callback);
-                } else {
-                    Log.d("SaveImageGallery", "Requesting permissions for WRITE_EXTERNAL_STORAGE");
-                    PermissionHelper.requestPermission(this, WRITE_PERM_REQUEST_CODE, WRITE_EXTERNAL_STORAGE);
-                }
-            } else {
-                // For Android 13+
-                if (PermissionHelper.hasPermission(this, READ_MEDIA_IMAGES)) {
-                    Log.d("SaveImageGallery", "Permissions already granted");
-                    saveBase64Image(this._args, this._callback);
-                } else {
-                    Log.d("SaveImageGallery", "Requesting permissions for READ_MEDIA_IMAGES");
-                    PermissionHelper.requestPermission(this, READ_MEDIA_PERM_REQUEST_CODE, READ_MEDIA_IMAGES);
-                }
-            }
+            saveBase64Image(this._args, this._callback);
         }
 
         return true;
@@ -266,28 +234,4 @@ public class SaveImageGallery extends CordovaPlugin {
         mediaScanIntent.setData(imageUri);
         cordova.getActivity().sendBroadcast(mediaScanIntent);
     }
-
-    /**
-     * Callback from PermissionHelper.requestPermission method
-     */
-	public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
-		for (int r : grantResults) {
-			if (r == PackageManager.PERMISSION_DENIED) {
-				Log.d("SaveImageGallery", "Permission not granted by the user");
-				_callback.error("Permissions denied");
-				return;
-			}
-		}
-
-		switch (requestCode) {
-		case WRITE_PERM_REQUEST_CODE:
-			Log.d("SaveImageGallery", "User granted the permission for WRITE_EXTERNAL_STORAGE");
-            saveBase64Image(this._args, this._callback);
-			break;
-        case READ_MEDIA_PERM_REQUEST_CODE:
-			Log.d("SaveImageGallery", "User granted the permission for READ_MEDIA_IMAGES");
-            saveBase64Image(this._args, this._callback);
-			break;
-		}
-	}
 }
