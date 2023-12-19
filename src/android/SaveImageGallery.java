@@ -1,7 +1,7 @@
 package com.tanyijia.saveImageGallery;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +14,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.Manifest;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -21,8 +24,10 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * SaveImageGallery.java
@@ -30,7 +35,7 @@ import android.util.Log;
  * Extended Android implementation of the Base64ToGallery for iOS.
  * Inspirated by StefanoMagrassi's code
  * https://github.com/Nexxa/cordova-base64-to-gallery
- * Updated for Android 13
+ * Updated for Android 10+ and 13 by Tan Yi Jia
  *
  * @author Tan Yi Jia <tanyijia@gmail.com>
  */
@@ -56,6 +61,8 @@ public class SaveImageGallery extends CordovaPlugin {
     private final String WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private final String READ_MEDIA_IMAGES = Manifest.permission.READ_MEDIA_IMAGES;
 
+    // private Context CONTEXT = this.cordova.getActivity().getApplicationContext();
+
     private JSONArray _args;
     private CallbackContext _callback;
 
@@ -68,7 +75,7 @@ public class SaveImageGallery extends CordovaPlugin {
         else {
             this._args = args;
             this._callback = callbackContext;
-            
+
             if (SDK_BUILD < TIRAMISU_SDK_BUILD) {
                 // For Android 12 and below
                 if (PermissionHelper.hasPermission(this, WRITE_EXTERNAL_STORAGE)) {
@@ -114,7 +121,6 @@ public class SaveImageGallery extends CordovaPlugin {
         }
 
         callbackContext.success(filename);
-
     }
 
     /**
@@ -126,6 +132,7 @@ public class SaveImageGallery extends CordovaPlugin {
         boolean mediaScannerEnabled = args.optBoolean(2);
         String format = args.optString(3);
         int quality = args.optInt(4);
+        Context context = this.cordova.getActivity().getApplicationContext();
 
         List<String> allowedFormats = Arrays.asList(new String[] { JPG_FORMAT, PNG_FORMAT });
 
@@ -153,96 +160,110 @@ public class SaveImageGallery extends CordovaPlugin {
         } else {
 
             // Save the image
-            File imageFile = savePhoto(bmp, filePrefix, format, quality);
+            Uri imageUri = savePhoto(bmp, filePrefix, format, quality, callbackContext);
 
-            if (imageFile == null) {
+            if (imageUri == null) {
                 callbackContext.error("Error while saving image");
+                Toast toast = Toast.makeText(context, "Failed to save image. Please try again.", Toast.LENGTH_SHORT);
+                toast.show();
+            } else if (mediaScannerEnabled) {
+                // Update image gallery
+                scanPhoto(imageUri);
+                callbackContext.success(imageUri.getPath());
+                Toast toast = Toast.makeText(context, "Image saved to gallery successfully.", Toast.LENGTH_SHORT);
+                toast.show();
             }
 
-            // Update image gallery
-            if (mediaScannerEnabled) {
-                scanPhoto(imageFile);
-            }
+            // String path = imageFile.toString();
 
-            String path = imageFile.toString();
+            // if (!path.startsWith("file://")) {
+            //     path = "file://" + path;
+            // }
 
-            if (!path.startsWith("file://")) {
-                path = "file://" + path;
-            }
-
-            callbackContext.success(path);
+            // callbackContext.success(path);
         }
     }
 
     /**
      * Private method to save a {@link Bitmap} into the photo library/temp folder with a format, a prefix and with the given quality.
      */
-    private File savePhoto(Bitmap bmp, String prefix, String format, int quality) {
-        File retVal = null;
+    private Uri savePhoto(Bitmap bmp, String prefix, String format, int quality, CallbackContext callbackContext) {
+        // File retVal = null;
+        Uri imageUri = null;
+        // Context context = this.cordova.getActivity().getApplicationContext();
 
         try {
             Calendar c = Calendar.getInstance();
             String date = EMPTY_STR + c.get(Calendar.YEAR) + c.get(Calendar.MONTH) + c.get(Calendar.DAY_OF_MONTH)
                     + c.get(Calendar.HOUR_OF_DAY) + c.get(Calendar.MINUTE) + c.get(Calendar.SECOND);
 
-            File folder;
+            // File folder;
+            ContentResolver contentResolver = this.cordova.getContext().getContentResolver();
 
-            if (Build.VERSION.SDK_INT >= 30) {
-                // @see https://developer.android.com/about/versions/11/privacy/storage
-                folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
-                folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-            } else {
-                folder = Environment.getExternalStorageDirectory();
-            }
+            // if (Build.VERSION.SDK_INT >= 29) {
+            //     // Use MediaStore instead
+            //     folder = context.getDownloadsDir();
+            // } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
+            //     folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            // } else {
+            //     folder = Environment.getExternalStorageDirectory();
+            // }
 
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
+            // if (!folder.exists()) {
+            //     folder.mkdirs();
+            // }
 
             // building the filename
             String fileName = prefix + date;
             Bitmap.CompressFormat compressFormat = null;
             // switch for String is not valid for java < 1.6, so we avoid it
             if (format.equalsIgnoreCase(JPG_FORMAT)) {
-                fileName += ".jpeg";
+                fileName += ".jpg";
                 compressFormat = Bitmap.CompressFormat.JPEG;
             } else if (format.equalsIgnoreCase(PNG_FORMAT)) {
                 fileName += ".png";
                 compressFormat = Bitmap.CompressFormat.PNG;
             } else {
                 // default case
-                fileName += ".jpeg";
+                fileName += ".jpg";
                 compressFormat = Bitmap.CompressFormat.JPEG;
             }
 
+            // use MediaStore to create the file
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, format.equalsIgnoreCase(PNG_FORMAT) ? "image/png" : "image/jpeg");
+
+            imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+
             // now we create the image in the folder
-            File imageFile = new File(folder, fileName);
-            FileOutputStream out = new FileOutputStream(imageFile);
+            // File imageFile = new File(folder, fileName);
+            // FileOutputStream out = new FileOutputStream(imageFile);
+
+            // now we save the file using MediaStore
+            OutputStream out = contentResolver.openOutputStream(imageUri);
+
             // compress it
             bmp.compress(compressFormat, quality, out);
             out.flush();
             out.close();
 
-            retVal = imageFile;
+            // retVal = imageFile;
 
         } catch (Exception e) {
             Log.e("SaveImageToGallery", "An exception occured while saving image: " + e.toString());
         }
 
-        return retVal;
+        return imageUri;
     }
 
     /**
      * Invoke the system's media scanner to add your photo to the Media Provider's database,
      * making it available in the Android Gallery application and to other apps.
      */
-    private void scanPhoto(File imageFile) {
+    private void scanPhoto(Uri imageUri) {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        Uri contentUri = Uri.fromFile(imageFile);
-
-        mediaScanIntent.setData(contentUri);
-
+        mediaScanIntent.setData(imageUri);
         cordova.getActivity().sendBroadcast(mediaScanIntent);
     }
 
