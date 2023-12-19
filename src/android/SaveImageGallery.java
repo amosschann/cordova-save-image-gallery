@@ -141,14 +141,6 @@ public class SaveImageGallery extends CordovaPlugin {
                 Toast toast = Toast.makeText(context, "Image saved to gallery successfully.", Toast.LENGTH_SHORT);
                 toast.show();
             }
-
-            // String path = imageFile.toString();
-
-            // if (!path.startsWith("file://")) {
-            //     path = "file://" + path;
-            // }
-
-            // callbackContext.success(path);
         }
     }
 
@@ -156,30 +148,15 @@ public class SaveImageGallery extends CordovaPlugin {
      * Private method to save a {@link Bitmap} into the photo library/temp folder with a format, a prefix and with the given quality.
      */
     private Uri savePhoto(Bitmap bmp, String prefix, String format, int quality, CallbackContext callbackContext) {
-        // File retVal = null;
         Uri imageUri = null;
-        // Context context = this.cordova.getActivity().getApplicationContext();
 
         try {
             Calendar c = Calendar.getInstance();
             String date = EMPTY_STR + c.get(Calendar.YEAR) + c.get(Calendar.MONTH) + c.get(Calendar.DAY_OF_MONTH)
                     + c.get(Calendar.HOUR_OF_DAY) + c.get(Calendar.MINUTE) + c.get(Calendar.SECOND);
 
-            // File folder;
+            // ContentResolver for MediaStore file download to gallery
             ContentResolver contentResolver = this.cordova.getContext().getContentResolver();
-
-            // if (Build.VERSION.SDK_INT >= 29) {
-            //     // Use MediaStore instead
-            //     folder = context.getDownloadsDir();
-            // } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1) {
-            //     folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-            // } else {
-            //     folder = Environment.getExternalStorageDirectory();
-            // }
-
-            // if (!folder.exists()) {
-            //     folder.mkdirs();
-            // }
 
             // building the filename
             String fileName = prefix + date;
@@ -204,11 +181,7 @@ public class SaveImageGallery extends CordovaPlugin {
 
             imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
 
-            // now we create the image in the folder
-            // File imageFile = new File(folder, fileName);
-            // FileOutputStream out = new FileOutputStream(imageFile);
-
-            // now we save the file using MediaStore
+            // now we save the file to gallery using MediaStore
             OutputStream out = contentResolver.openOutputStream(imageUri);
 
             // compress it
