@@ -96,39 +96,4 @@
     }
      ];
 }
-
--(void) removeImageFromLibrary : (CDVInvokedUrlCommand*) command {
-    [self.commandDelegate runInBackground : ^{
-        self.callbackId = command.callbackId;
-        self.result = nil;
-        
-        NSString *filepath = [command.arguments objectAtIndex : 0];
-        
-        
-        if (filepath != nil && [filepath length] > 0) {
-            NSFileManager *fileManager = [NSFileManager defaultManager]; //create instance of NSFileManager
-            NSError *error = nil;
-            // removeFile
-            bool success = [fileManager removeItemAtPath : filepath error : &error];
-            
-            if (success) {
-                CDVPluginResult * pluginResult = [CDVPluginResult resultWithStatus : CDVCommandStatus_OK messageAsString : filepath];
-                [pluginResult setKeepCallbackAsBool:YES];
-                [self.commandDelegate sendPluginResult : pluginResult callbackId : command.callbackId];
-                
-            } else {
-                filepath = [filepath stringByAppendingString : @" - error removing the file"];
-                CDVPluginResult * pluginResult = [CDVPluginResult resultWithStatus : CDVCommandStatus_ERROR messageAsString : filepath];
-                [pluginResult setKeepCallbackAsBool:YES];
-                [self.commandDelegate sendPluginResult : pluginResult callbackId : command.callbackId];
-            }
-        } else {
-            CDVPluginResult * pluginResult = [CDVPluginResult resultWithStatus : CDVCommandStatus_ERROR messageAsString : @"not valid filepath"];
-            [pluginResult setKeepCallbackAsBool:YES];
-            [self.commandDelegate sendPluginResult : pluginResult callbackId : command.callbackId];
-        }
-        
-    }
-     ];
-}
 @end

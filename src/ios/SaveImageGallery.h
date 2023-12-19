@@ -17,6 +17,5 @@
 @property(nonatomic, assign) CDVPluginResult* result;
 
 -(void) saveImageDataToLibrary : (CDVInvokedUrlCommand*) command;
--(void) removeImageFromLibrary : (CDVInvokedUrlCommand*) command;
 
 @end
