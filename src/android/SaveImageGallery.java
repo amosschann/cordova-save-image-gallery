@@ -48,47 +48,17 @@ public class SaveImageGallery extends CordovaPlugin {
 
     // actions constants
     public static final String SAVE_BASE64_ACTION = "saveImageDataToLibrary";
-    public static final String REMOVE_IMAGE_ACTION = "removeImageFromLibrary";
 
     private JSONArray _args;
     private CallbackContext _callback;
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-
-        if(action.equals(REMOVE_IMAGE_ACTION)) {
-            this.removeImage(args, callbackContext);
-        }
-        else {
-            this._args = args;
-            this._callback = callbackContext;
-            saveBase64Image(this._args, this._callback);
-        }
-
+        this._args = args;
+        this._callback = callbackContext;
+        saveBase64Image(this._args, this._callback);
+        
         return true;
-    }
-
-    /**
-     * It deletes an image from the given path.
-     */
-    private void removeImage(JSONArray args, CallbackContext callbackContext) throws JSONException {
-        String filename = args.optString(0);
-
-        // isEmpty() requires API level 9
-        if (filename.equals(EMPTY_STR)) {
-            callbackContext.error("Missing filename string");
-        }
-
-        File file = new File(filename);
-        if (file.exists()) {
-            try {
-                file.delete();
-            } catch (Exception ex) {
-                callbackContext.error(ex.getMessage());
-            }
-        }
-
-        callbackContext.success(filename);
     }
 
     /**

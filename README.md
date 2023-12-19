@@ -63,39 +63,6 @@ function onDeviceReady() {
 }
 ```
 
-## Usage (removeImageFromLibrary)
-Call the `window.imageSaver.removeImageFromLibrary()` method using success and error callbacks and the passing the image URL in the options JSON:
-
-### Methods
-#### `window.imageSaver.removeImageFromLibrary(options [,success, fail])`
-
-Param       | Type       | Default           | Description
------------ | ---------- | ----------------- | ------------------
-**options** | *object*   | \*see below       | options
-**success** | *function* | **console.log**   | success callback
-**fail**    | *function* | **console.error** | fail callback
-
-#### Available options
-
-##### `data`
-File path input String.
-
-### Example
-
-```javascript
-function onDeviceReady() {
-    var params = {data: "/data/data/test.png"};
-    window.imageSaver.removeImageFromLibrary(params,
-        function (filePath) {
-          console.log('File removed from ' + filePath);
-        },
-        function (msg) {
-          console.error(msg);
-        }
-      );
-}
-```
-
 ## Authors and contributors
 - [Tommy-Carlos Williams](http://github.com/devgeeks)
 - [Simba Zhang](http://github.com/solderzzc)
