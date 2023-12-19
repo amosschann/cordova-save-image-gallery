@@ -1,5 +1,5 @@
 # Cordova saveImageGallery Plugin
-Updated to work for Android 13 permissions.
+Updated to work for Android 10+ without needing permissions.
 
 This plugin (based on [devgeeks/Canvas2ImagePlugin](http://github.com/devgeeks/Canvas2ImagePlugin)) allows you to save base64 data as a png/jpg image into the device (iOS Photo Library, Android Gallery or WindowsPhone 8 Photo Album).
 
