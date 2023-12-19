@@ -39,12 +39,6 @@
   <platform name="android">
     <source-file src="src/android/SaveImageGallery.java" target-dir="src/com/tanyijia/SaveImageGallery"/>
 
-    <config-file parent="/*" target="AndroidManifest.xml">
-      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-      <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
-      <uses-permission android:name="android.permission.DELETE_CACHE_FILES"/>
-    </config-file>
-
     <config-file parent="/*" target="res/xml/config.xml">
       <feature name="SaveImageGallery">
         <param name="android-package" value="com.tanyijia.SaveImageGallery.SaveImageGallery"/>
