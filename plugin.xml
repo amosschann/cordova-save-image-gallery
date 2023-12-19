@@ -5,7 +5,7 @@
     <engine name="cordova-ios" version=">=3.8.0" />
   </engines>
 
-  <name>saveImageGallery</name>
+  <name>SaveImageGallery</name>
 
   <description>This plugin allows you to save base64 data as a png/jpg image into the device (iOS Photo Library, Android Gallery, WindowsPhone 8 Photo Album) compressing also the image if needed.</description>
   <author>Tan Yi Jia - tanyijia@gmail.com</author>
@@ -17,7 +17,7 @@
 
   <license>MIT</license>
 
-  <js-module name="saveImageGallery" src="www/saveImageGallery.js">
+  <js-module name="SaveImageGallery" src="www/saveImageGallery.js">
     <clobbers target="cordova.saveImageGallery"/>
   </js-module>
 
@@ -47,7 +47,7 @@
 
     <config-file parent="/*" target="res/xml/config.xml">
       <feature name="SaveImageGallery">
-        <param name="android-package" value="com.tanyijia.saveImageGallery.SaveImageGallery"/>
+        <param name="android-package" value="com.tanyijia.SaveImageGallery.SaveImageGallery"/>
       </feature>
     </config-file>
   </platform>

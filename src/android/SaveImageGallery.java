@@ -1,4 +1,4 @@
-package com.tanyijia.saveImageGallery;
+package com.tanyijia.SaveImageGallery;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -57,7 +57,7 @@ public class SaveImageGallery extends CordovaPlugin {
         this._args = args;
         this._callback = callbackContext;
         saveBase64Image(this._args, this._callback);
-        
+
         return true;
     }
 
