@@ -26,7 +26,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * SaveImageGallery.java
@@ -102,14 +101,10 @@ public class SaveImageGallery extends CordovaPlugin {
 
             if (imageUri == null) {
                 callbackContext.error("Error while saving image");
-                Toast toast = Toast.makeText(context, "Failed to save image. Please try again.", Toast.LENGTH_SHORT);
-                toast.show();
             } else if (mediaScannerEnabled) {
                 // Update image gallery
                 scanPhoto(imageUri);
                 callbackContext.success(imageUri.getPath());
-                Toast toast = Toast.makeText(context, "Image saved to gallery successfully.", Toast.LENGTH_SHORT);
-                toast.show();
             }
         }
     }
