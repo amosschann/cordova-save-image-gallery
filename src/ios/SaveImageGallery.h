@@ -2,7 +2,7 @@
 //  SaveImageGallery.h
 //  SaveImageGallery PhoneGap/Cordova plugin
 //
-//	Copyright (c) 2016 Alejandro Gomez <agommor@gmail.com>
+//	Copyright (c) 2023 Tan Yi Jia <tanyijia@gmail.com>
 //
 //  Based on StefanoMagrassi's "Base64ToGallery.h"
 //
