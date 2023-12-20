@@ -39,6 +39,11 @@
   <platform name="android">
     <source-file src="src/android/SaveImageGallery.java" target-dir="src/com/tanyijia/SaveImageGallery"/>
 
+    <config-file parent="/*" target="AndroidManifest.xml">
+    <!-- for Android 9 and below. You can add "android:maxSdkVersion="28" if you want to limit this permission up to Android 9." -->
+      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> 
+    </config-file>
+
     <config-file parent="/*" target="res/xml/config.xml">
       <feature name="SaveImageGallery">
         <param name="android-package" value="com.tanyijia.SaveImageGallery.SaveImageGallery"/>

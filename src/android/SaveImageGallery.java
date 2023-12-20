@@ -7,14 +7,17 @@ import java.util.List;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PermissionHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -43,6 +46,14 @@ public class SaveImageGallery extends CordovaPlugin {
     // actions constants
     public static final String SAVE_BASE64_ACTION = "saveImageDataToLibrary";
 
+    // Android version check
+    public static final int SDK_BUILD = android.os.Build.VERSION.SDK_INT;
+    public static final int P_SDK_BUILD = android.os.Build.VERSION_CODES.P;
+
+    // permissions
+    public static final int WRITE_PERM_REQUEST_CODE = 0;
+    private final String WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
     private JSONArray _args;
     private CallbackContext _callback;
 
@@ -50,7 +61,20 @@ public class SaveImageGallery extends CordovaPlugin {
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         this._args = args;
         this._callback = callbackContext;
-        saveBase64Image(this._args, this._callback);
+
+        if (SDK_BUILD <= P_SDK_BUILD) {
+            // For Android 9 and below
+            if (PermissionHelper.hasPermission(this, WRITE_EXTERNAL_STORAGE)) {
+                Log.d("SaveImageGallery", "Permissions already granted, or Android version is lower than 6");
+                saveBase64Image(this._args, this._callback);
+            } else {
+                Log.d("SaveImageGallery", "Requesting permissions for WRITE_EXTERNAL_STORAGE");
+                PermissionHelper.requestPermission(this, WRITE_PERM_REQUEST_CODE, WRITE_EXTERNAL_STORAGE);
+            }
+        } else {
+            // For Android 10+
+            saveBase64Image(this._args, this._callback);
+        }
 
         return true;
     }
@@ -170,4 +194,23 @@ public class SaveImageGallery extends CordovaPlugin {
         mediaScanIntent.setData(imageUri);
         cordova.getActivity().sendBroadcast(mediaScanIntent);
     }
+
+    /**
+     * Callback from PermissionHelper.requestPermission method for Android 9 and below
+     */
+	public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
+		for (int r : grantResults) {
+			if (r == PackageManager.PERMISSION_DENIED) {
+				Log.d("SaveImageGallery", "Permission not granted by the user");
+				_callback.error("Permissions denied");
+				return;
+			}
+		}
+		switch (requestCode) {
+		case WRITE_PERM_REQUEST_CODE:
+			Log.d("SaveImageGallery", "User granted the permission for WRITE_EXTERNAL_STORAGE");
+            saveBase64Image(this._args, this._callback);
+			break;
+		}
+	}
 }
