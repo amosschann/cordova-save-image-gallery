@@ -100,6 +100,9 @@ public class SaveImageGallery extends CordovaPlugin {
                 // Update image gallery
                 scanPhoto(imageUri);
                 callbackContext.success(imageUri.getPath());
+            } else {
+                // File saved but not in gallery as mediascanner is disabled
+                callbackContext.error("Image saved but mediascanner is disabled. Use a file manager to find the image at "+imageUri.getPath());
             }
         }
     }
